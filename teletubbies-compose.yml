@@ -1,0 +1,81 @@
+version: "3.8"
+services:
+  db:
+    image: postgres
+    container_name: teletubbies_db
+    environment:
+      POSTGRES_DATABASE: teletubbies
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      TZ: "Asia/Bangkok"
+    ports:
+      - 5432:5432
+    volumes:
+      - C:\\Users\\acer\\Desktop\\teletubbies-cafe\\PostgresDB:/var/lib/postgresql/data
+    restart: on-failure
+  pgadmin4:
+    container_name: pgadmin4
+    image: dpage/pgadmin4
+    restart: on-failure
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+  product-service:
+    image: teletubbies/product:latest
+    container_name: product-service
+    ports:
+      - 8081:8081
+      - 9081:9081
+    links:
+      - "db:db"
+    depends_on:
+      - db
+    restart: on-failure
+  user-service:
+    image: teletubbies/user:latest
+    container_name: user-service
+    ports:
+      - 8082:8082
+      - 9082:9082
+    links:
+      - "db:db"
+    depends_on:
+      - db
+    restart: on-failure
+  auth-service:
+    image: teletubbies/auth:latest
+    container_name: auth-service
+    ports:
+      - 8083:8083
+      - 9083:9083
+    links:
+      - "db:db"
+    depends_on:
+      - db
+    restart: on-failure
+  timestamp-service:
+    image: teletubbies/timestamp:latest
+    container_name: timestamp-service
+    ports:
+      - 8084:8084
+      - 9084:9084
+    links:
+      - "db:db"
+    depends_on:
+      - db
+    restart: on-failure
+  saleorder-service:
+    image: teletubbies/saleorder:latest
+    container_name: saleorder-service
+    ports:
+      - 8085:8085
+      - 9085:9085
+    links:
+      - "db:db"
+    depends_on:
+      - db
+    restart: on-failure
